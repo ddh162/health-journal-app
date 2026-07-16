@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Health Journal</title>
+<meta name="theme-color" content="#4a9e9e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Health Log">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+  <header class="topbar">
+    <div class="topbar-title" id="topbarTitle">Today</div>
+    <button class="icon-btn" id="syncBtn" title="Sync now" aria-label="Sync now">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.75 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+    </button>
+  </header>
+
+  <main id="views">
+
+    <!-- LOG -->
+    <section class="view" id="view-log">
+      <form id="logForm">
+
+        <div class="field-row">
+          <label class="field-label" for="entryDate">Date</label>
+          <input type="date" id="entryDate" required>
+        </div>
+
+        <div class="card">
+          <div class="card-title">😴 Sleep</div>
+          <div class="slider-row">
+            <label>Quality <span class="slider-val" id="val-sleep_quality">5</span>/10</label>
+            <input type="range" min="1" max="10" value="5" id="sleep_quality" class="slider">
+          </div>
+          <label class="toggle-row"><input type="checkbox" id="night_sweats"><span>Night sweats</span></label>
+          <textarea id="sleep_notes" placeholder="Notes (optional)"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🍽️ Digestion</div>
+          <div class="chip-row" id="chips-digestion_consistency" data-single="true">
+            <button type="button" class="chip" data-value="constipated">Constipated</button>
+            <button type="button" class="chip" data-value="normal">Normal</button>
+            <button type="button" class="chip" data-value="soft">Soft</button>
+            <button type="button" class="chip" data-value="loose">Loose</button>
+            <button type="button" class="chip" data-value="watery">Watery</button>
+          </div>
+          <label class="toggle-row"><input type="checkbox" id="digestion_complete" checked><span>Felt complete</span></label>
+          <textarea id="digestion_notes" placeholder="Notes (optional)"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🦶 Feet</div>
+          <div class="slider-row">
+            <label>Left pain <span class="slider-val" id="val-foot_pain_left">0</span>/10</label>
+            <input type="range" min="0" max="10" value="0" id="foot_pain_left" class="slider">
+          </div>
+          <div class="slider-row">
+            <label>Right pain <span class="slider-val" id="val-foot_pain_right">0</span>/10</label>
+            <input type="range" min="0" max="10" value="0" id="foot_pain_right" class="slider">
+          </div>
+          <div class="chip-row" id="chips-foot_support">
+            <button type="button" class="chip" data-value="taping-left">Taping L</button>
+            <button type="button" class="chip" data-value="taping-right">Taping R</button>
+            <button type="button" class="chip" data-value="splint-left">Splint L</button>
+            <button type="button" class="chip" data-value="splint-right">Splint R</button>
+            <button type="button" class="chip" data-value="orthotics">Orthotics</button>
+            <button type="button" class="chip" data-value="shoes">Supportive shoes</button>
+          </div>
+          <label class="toggle-row"><input type="checkbox" id="foot_swelling"><span>Swelling</span></label>
+          <textarea id="foot_notes" placeholder="Notes (optional)"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-title">⚡ Energy</div>
+          <div class="slider-row">
+            <label>Level <span class="slider-val" id="val-energy_level">5</span>/10</label>
+            <input type="range" min="1" max="10" value="5" id="energy_level" class="slider">
+          </div>
+          <label class="toggle-row"><input type="checkbox" id="brain_fog"><span>Brain fog</span></label>
+          <textarea id="energy_notes" placeholder="Notes (optional)"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🔥 Inflammation / Pain</div>
+          <div class="slider-row">
+            <label>Severity <span class="slider-val" id="val-inflammation_severity">0</span>/10</label>
+            <input type="range" min="0" max="10" value="0" id="inflammation_severity" class="slider">
+          </div>
+          <div class="chip-row" id="chips-inflammation_locations">
+            <button type="button" class="chip" data-value="wrist-L">Wrist L</button>
+            <button type="button" class="chip" data-value="wrist-R">Wrist R</button>
+            <button type="button" class="chip" data-value="hip">Hip</button>
+            <button type="button" class="chip" data-value="knee-L">Knee L</button>
+            <button type="button" class="chip" data-value="knee-R">Knee R</button>
+            <button type="button" class="chip" data-value="toe">Toe</button>
+            <button type="button" class="chip" data-value="feet">Feet</button>
+            <button type="button" class="chip" data-value="other">Other</button>
+          </div>
+          <textarea id="inflammation_notes" placeholder="Notes (optional)"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-title">✨ Other symptoms</div>
+          <label class="toggle-row"><input type="checkbox" id="chemical_sensitivity"><span>Reaction to cleaners / dust / chemicals</span></label>
+          <label class="toggle-row"><input type="checkbox" id="period"><span>Period today</span></label>
+          <div class="slider-row">
+            <label>Bloating / puffiness <span class="slider-val" id="val-bloating_puffiness">0</span>/10</label>
+            <input type="range" min="0" max="10" value="0" id="bloating_puffiness" class="slider">
+          </div>
+          <textarea id="other_symptoms" placeholder="Anything else going on"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💊 Medications &amp; supplements</div>
+          <div id="medsList"></div>
+          <div class="add-med-row">
+            <input type="text" id="newMedName" placeholder="Add medication / supplement">
+            <button type="button" id="addMedBtn" class="btn-secondary">Add</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📝 Daily notes</div>
+          <textarea id="daily_notes" placeholder="Anything you want to remember about today"></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" id="saveBtn">Save today's entry</button>
+        <div class="save-status" id="saveStatus"></div>
+      </form>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="view hidden" id="view-history">
+      <div id="historyList"></div>
+      <div class="empty-state hidden" id="historyEmpty">No entries yet.</div>
+    </section>
+
+    <!-- TRENDS -->
+    <section class="view hidden" id="view-trends">
+      <div class="range-row">
+        <button type="button" class="chip range-chip active" data-days="7">7d</button>
+        <button type="button" class="chip range-chip" data-days="30">30d</button>
+        <button type="button" class="chip range-chip" data-days="90">90d</button>
+        <button type="button" class="chip range-chip" data-days="0">All</button>
+      </div>
+      <div class="chart-card"><div class="chart-title">Sleep quality</div><canvas id="chart-sleep"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Energy level</div><canvas id="chart-energy"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Foot pain (L / R)</div><canvas id="chart-feet"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Inflammation severity</div><canvas id="chart-inflammation"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Digestion comfort (approx.)</div><canvas id="chart-digestion"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Bloating / puffiness</div><canvas id="chart-bloating"></canvas></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view hidden" id="view-settings">
+      <div class="card">
+        <div class="card-title">Sync setup</div>
+        <p class="hint">Paste the Google Apps Script Web App URL here (see setup instructions). Use the exact same URL on both phones so entries stay in sync.</p>
+        <input type="url" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+        <button type="button" class="btn-primary" id="saveUrlBtn">Save &amp; test connection</button>
+        <div class="save-status" id="urlStatus"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">About</div>
+        <p class="hint">Entries save to a shared Google Sheet. Anyone with the app installed and this same URL sees the same log. Data also stays cached on this phone for offline viewing.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="log">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>
+      <span>Log</span>
+    </button>
+    <button class="tab" data-view="history">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M13 3a9 9 0 1 0 9 9h-2a7 7 0 1 1-7-7V3zm1 5v5l4 2 .75-1.23-3.25-1.9V8H14z"/></svg>
+      <span>History</span>
+    </button>
+    <button class="tab" data-view="trends">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M3 17l6-6 4 4 8-8 1.5 1.5L13 18l-4-4-6 6z"/></svg>
+      <span>Trends</span>
+    </button>
+    <button class="tab" data-view="settings">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M19.14 12.94a7.14 7.14 0 0 0 .05-.94 7.14 7.14 0 0 0-.05-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.3 7.3 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.14.56-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.7 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.03.31-.05.63-.05.94s.02.63.05.94L2.82 14.5a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.42.32.6.22l2.39-.96c.49.38 1.04.7 1.63.94l.36 2.54c.05.24.26.42.5.42h3.84c.24 0 .45-.18.5-.42l.36-2.54c.59-.24 1.14-.56 1.63-.94l2.39.96c.24.1.5 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>
+      <span>Settings</span>
+    </button>
+  </nav>
+
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
