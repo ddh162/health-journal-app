@@ -154,6 +154,32 @@ input[type="range"].slider::-moz-range-thumb {
   border: 3px solid #fff;
 }
 
+.slider-endlabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+
+/* Color variants for sliders (e.g. left/right foot pain) */
+input[type="range"].slider-red::-webkit-slider-thumb { background: #e03131; }
+input[type="range"].slider-red::-moz-range-thumb { background: #e03131; }
+input[type="range"].slider-blue::-webkit-slider-thumb { background: #3b82f6; }
+input[type="range"].slider-blue::-moz-range-thumb { background: #3b82f6; }
+
+.fill-blank {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--ink);
+  margin: 10px 0;
+}
+
 .toggle-row {
   display: flex;
   align-items: center;

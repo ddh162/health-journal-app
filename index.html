@@ -40,6 +40,10 @@
           <div class="slider-row">
             <label>Quality <span class="slider-val" id="val-sleep_quality">5</span>/10</label>
             <input type="range" min="1" max="10" value="5" id="sleep_quality" class="slider">
+            <div class="slider-endlabels">
+              <span>😴 Very poor</span>
+              <span>Excellent 😊</span>
+            </div>
           </div>
           <label class="toggle-row"><input type="checkbox" id="night_sweats"><span>Night sweats</span></label>
           <textarea id="sleep_notes" placeholder="Notes (optional)"></textarea>
@@ -62,11 +66,19 @@
           <div class="card-title">🦶 Feet</div>
           <div class="slider-row">
             <label>Left pain <span class="slider-val" id="val-foot_pain_left">0</span>/10</label>
-            <input type="range" min="0" max="10" value="0" id="foot_pain_left" class="slider">
+            <input type="range" min="0" max="10" value="0" id="foot_pain_left" class="slider slider-blue">
+            <div class="slider-endlabels">
+              <span>No pain</span>
+              <span>Very painful</span>
+            </div>
           </div>
           <div class="slider-row">
             <label>Right pain <span class="slider-val" id="val-foot_pain_right">0</span>/10</label>
-            <input type="range" min="0" max="10" value="0" id="foot_pain_right" class="slider">
+            <input type="range" min="0" max="10" value="0" id="foot_pain_right" class="slider slider-red">
+            <div class="slider-endlabels">
+              <span>No pain</span>
+              <span>Very painful</span>
+            </div>
           </div>
           <div class="chip-row" id="chips-foot_support">
             <button type="button" class="chip" data-value="taping-left">Taping L</button>
@@ -83,9 +95,14 @@
         <div class="card">
           <div class="card-title">⚡ Energy</div>
           <div class="slider-row">
-            <label>Level <span class="slider-val" id="val-energy_level">5</span>/10</label>
+            <label>I feel like a <span class="slider-val" id="val-energy_level">5</span>/10</label>
             <input type="range" min="1" max="10" value="5" id="energy_level" class="slider">
+            <div class="slider-endlabels">
+              <span>🦥 Sloth</span>
+              <span>Superhero 🦸</span>
+            </div>
           </div>
+          <input type="text" id="energy_word" class="fill-blank" placeholder="Today I feel like a ___ (superhero, mama tiger, slug, sloth...)">
           <label class="toggle-row"><input type="checkbox" id="brain_fog"><span>Brain fog</span></label>
           <textarea id="energy_notes" placeholder="Notes (optional)"></textarea>
         </div>
@@ -95,6 +112,10 @@
           <div class="slider-row">
             <label>Severity <span class="slider-val" id="val-inflammation_severity">0</span>/10</label>
             <input type="range" min="0" max="10" value="0" id="inflammation_severity" class="slider">
+            <div class="slider-endlabels">
+              <span>No pain</span>
+              <span>Very painful</span>
+            </div>
           </div>
           <div class="chip-row" id="chips-inflammation_locations">
             <button type="button" class="chip" data-value="wrist-L">Wrist L</button>

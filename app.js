@@ -172,7 +172,7 @@
     ['night_sweats', 'digestion_complete', 'foot_swelling', 'brain_fog', 'chemical_sensitivity', 'period'].forEach(function (id) {
       $(id).checked = id === 'digestion_complete';
     });
-    ['sleep_notes', 'digestion_notes', 'foot_notes', 'energy_notes', 'inflammation_notes', 'other_symptoms', 'daily_notes'].forEach(function (id) {
+    ['sleep_notes', 'digestion_notes', 'foot_notes', 'energy_notes', 'energy_word', 'inflammation_notes', 'other_symptoms', 'daily_notes'].forEach(function (id) {
       $(id).value = '';
     });
     clearChips('chips-digestion_consistency');
@@ -202,6 +202,7 @@
       foot_swelling: $('foot_swelling').checked,
       foot_notes: $('foot_notes').value.trim(),
       energy_level: Number($('energy_level').value),
+      energy_word: $('energy_word').value.trim(),
       brain_fog: $('brain_fog').checked,
       energy_notes: $('energy_notes').value.trim(),
       inflammation_severity: Number($('inflammation_severity').value),
@@ -301,6 +302,7 @@
       addBadge(badges, 'Feet L/R ' + safe(e.foot_pain_left) + '/' + safe(e.foot_pain_right), Number(e.foot_pain_left) >= 6 || Number(e.foot_pain_right) >= 6);
       addBadge(badges, 'Inflammation ' + safe(e.inflammation_severity), Number(e.inflammation_severity) >= 6);
       if (e.digestion_consistency) addBadge(badges, 'Digestion: ' + e.digestion_consistency, false);
+      if (e.energy_word) addBadge(badges, 'Feels like: ' + e.energy_word, false);
       if (e.period === true || e.period === 'TRUE') addBadge(badges, 'Period', false);
       if (e.brain_fog === true || e.brain_fog === 'TRUE') addBadge(badges, 'Brain fog', false);
       card.appendChild(badges);
@@ -400,39 +402,55 @@
     $(canvasId).parentElement.style.height = '200px';
   }
 
+  // Marks any day where a period was logged with a red dot on the chart,
+  // regardless of the line's own color. Returns arrays (one entry per data
+  // point) that get spread into a dataset alongside its normal styling.
+  function isPeriod(e) {
+    return e.period === true || e.period === 'true' || e.period === 'TRUE' || e.period === 1 || e.period === '1';
+  }
+
+  function periodPointStyle(entries, baseColor) {
+    return {
+      pointBackgroundColor: entries.map(function (e) { return isPeriod(e) ? '#e03131' : baseColor; }),
+      pointBorderColor: entries.map(function (e) { return isPeriod(e) ? '#e03131' : baseColor; }),
+      pointRadius: entries.map(function (e) { return isPeriod(e) ? 6 : 3; }),
+      pointHoverRadius: entries.map(function (e) { return isPeriod(e) ? 7 : 4; })
+    };
+  }
+
   function renderCharts() {
     var entries = filteredEntriesForRange(state.trendRangeDays);
     var labels = entries.map(function (e) { return fmtDate(e.date); });
 
-    lineChart('chart-sleep', 'sleep', labels, [{
+    lineChart('chart-sleep', 'sleep', labels, [Object.assign({
       label: 'Sleep quality', data: entries.map(function (e) { return numOrNull(e.sleep_quality); }),
       borderColor: '#4a9e9e', backgroundColor: '#4a9e9e33', fill: true
-    }]);
+    }, periodPointStyle(entries, '#4a9e9e'))]);
 
-    lineChart('chart-energy', 'energy', labels, [{
+    lineChart('chart-energy', 'energy', labels, [Object.assign({
       label: 'Energy', data: entries.map(function (e) { return numOrNull(e.energy_level); }),
       borderColor: '#8b7abf', backgroundColor: '#8b7abf33', fill: true
-    }]);
+    }, periodPointStyle(entries, '#8b7abf'))]);
 
     lineChart('chart-feet', 'feet', labels, [
-      { label: 'Left', data: entries.map(function (e) { return numOrNull(e.foot_pain_left); }), borderColor: '#d97757', backgroundColor: 'transparent' },
-      { label: 'Right', data: entries.map(function (e) { return numOrNull(e.foot_pain_right); }), borderColor: '#c74e3b', backgroundColor: 'transparent' }
+      Object.assign({ label: 'Left', data: entries.map(function (e) { return numOrNull(e.foot_pain_left); }), borderColor: '#3b82f6', backgroundColor: 'transparent' }, periodPointStyle(entries, '#3b82f6')),
+      Object.assign({ label: 'Right', data: entries.map(function (e) { return numOrNull(e.foot_pain_right); }), borderColor: '#e03131', backgroundColor: 'transparent' }, periodPointStyle(entries, '#e03131'))
     ]);
 
-    lineChart('chart-inflammation', 'inflammation', labels, [{
+    lineChart('chart-inflammation', 'inflammation', labels, [Object.assign({
       label: 'Inflammation', data: entries.map(function (e) { return numOrNull(e.inflammation_severity); }),
       borderColor: '#d97757', backgroundColor: '#d9775733', fill: true
-    }]);
+    }, periodPointStyle(entries, '#d97757'))]);
 
-    lineChart('chart-digestion', 'digestion', labels, [{
+    lineChart('chart-digestion', 'digestion', labels, [Object.assign({
       label: 'Digestion comfort', data: entries.map(function (e) { return digestionComfortScore(e.digestion_consistency); }),
       borderColor: '#6aa66f', backgroundColor: '#6aa66f33', fill: true
-    }]);
+    }, periodPointStyle(entries, '#6aa66f'))]);
 
-    lineChart('chart-bloating', 'bloating', labels, [{
+    lineChart('chart-bloating', 'bloating', labels, [Object.assign({
       label: 'Bloating / puffiness', data: entries.map(function (e) { return numOrNull(e.bloating_puffiness); }),
       borderColor: '#c9a13b', backgroundColor: '#c9a13b33', fill: true
-    }]);
+    }, periodPointStyle(entries, '#c9a13b'))]);
   }
 
   function numOrNull(v) {
