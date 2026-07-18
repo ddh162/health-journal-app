@@ -3,7 +3,7 @@
 // It never caches API calls to the Apps Script backend — those always
 // go to the network so both phones see fresh data.
 
-const CACHE_NAME = 'health-journal-shell-v1';
+const CACHE_NAME = 'health-journal-shell-v2';
 const SHELL_FILES = [
   './',
   './index.html',
