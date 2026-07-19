@@ -382,9 +382,29 @@
     }
   }
 
-  function lineChart(canvasId, key, labels, datasets) {
+  // yLabels (optional) lets a chart show the same words used on its slider
+  // (e.g. "Excellent" / "Very poor") at the top and bottom of the y-axis,
+  // instead of just plain numbers.
+  function lineChart(canvasId, key, labels, datasets, yLabels) {
     destroyChart(key);
     var ctx = $(canvasId).getContext('2d');
+    var yScale = { ticks: { font: { size: 10 } } };
+
+    if (yLabels) {
+      yScale.min = yLabels.min;
+      yScale.max = yLabels.max;
+      yScale.afterBuildTicks = function (axis) {
+        axis.ticks = [{ value: yLabels.min }, { value: yLabels.max }];
+      };
+      yScale.ticks.callback = function (value) {
+        if (value === yLabels.min) return yLabels.minLabel;
+        if (value === yLabels.max) return yLabels.maxLabel;
+        return '';
+      };
+    } else {
+      yScale.beginAtZero = true;
+    }
+
     state.charts[key] = new Chart(ctx, {
       type: 'line',
       data: { labels: labels, datasets: datasets },
@@ -393,7 +413,7 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: datasets.length > 1, labels: { boxWidth: 10, font: { size: 11 } } } },
         scales: {
-          y: { beginAtZero: true, ticks: { font: { size: 10 } } },
+          y: yScale,
           x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
         },
         elements: { point: { radius: 3 }, line: { tension: 0.3 } }
@@ -425,22 +445,22 @@
     lineChart('chart-sleep', 'sleep', labels, [Object.assign({
       label: 'Sleep quality', data: entries.map(function (e) { return numOrNull(e.sleep_quality); }),
       borderColor: '#4a9e9e', backgroundColor: '#4a9e9e33', fill: true
-    }, periodPointStyle(entries, '#4a9e9e'))]);
+    }, periodPointStyle(entries, '#4a9e9e'))], { min: 1, max: 10, minLabel: '😴 Very poor', maxLabel: 'Excellent 😊' });
 
     lineChart('chart-energy', 'energy', labels, [Object.assign({
       label: 'Energy', data: entries.map(function (e) { return numOrNull(e.energy_level); }),
       borderColor: '#8b7abf', backgroundColor: '#8b7abf33', fill: true
-    }, periodPointStyle(entries, '#8b7abf'))]);
+    }, periodPointStyle(entries, '#8b7abf'))], { min: 1, max: 10, minLabel: '🦥 Sloth', maxLabel: 'Superhero 🦸' });
 
     lineChart('chart-feet', 'feet', labels, [
       Object.assign({ label: 'Left', data: entries.map(function (e) { return numOrNull(e.foot_pain_left); }), borderColor: '#3b82f6', backgroundColor: 'transparent' }, periodPointStyle(entries, '#3b82f6')),
       Object.assign({ label: 'Right', data: entries.map(function (e) { return numOrNull(e.foot_pain_right); }), borderColor: '#e03131', backgroundColor: 'transparent' }, periodPointStyle(entries, '#e03131'))
-    ]);
+    ], { min: 0, max: 10, minLabel: 'No pain', maxLabel: 'Very painful' });
 
     lineChart('chart-inflammation', 'inflammation', labels, [Object.assign({
       label: 'Inflammation', data: entries.map(function (e) { return numOrNull(e.inflammation_severity); }),
       borderColor: '#d97757', backgroundColor: '#d9775733', fill: true
-    }, periodPointStyle(entries, '#d97757'))]);
+    }, periodPointStyle(entries, '#d97757'))], { min: 0, max: 10, minLabel: 'No pain', maxLabel: 'Very painful' });
 
     lineChart('chart-digestion', 'digestion', labels, [Object.assign({
       label: 'Digestion comfort', data: entries.map(function (e) { return digestionComfortScore(e.digestion_consistency); }),
